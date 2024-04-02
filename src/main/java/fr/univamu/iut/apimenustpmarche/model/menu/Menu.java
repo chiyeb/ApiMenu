@@ -23,29 +23,28 @@ public class Menu {
     private double price;
     @Column(name = "Creator_Id")
     private int creator;
-//    @ManyToMany
-//    @JoinTable(
-//            name = "plates_in_menus",
-//            joinColumns = @JoinColumn(name = "id_menus", referencedColumnName = "id"),
-//            inverseJoinColumns = @JoinColumn(name = "id_plates", referencedColumnName = "id")
-//    )
-    @Transient
+    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "plates_in_menus",
+            joinColumns = @JoinColumn(name = "id_menus", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "id_plates", referencedColumnName = "id")
+    )
     private List<Plate> plates = new ArrayList<>();
     @Transient
-    private List<Integer> platesId;
+    private List<Integer> IdPlates;
     protected Menu() {
     }
     public Menu(String name, String description, List<Integer> platesId) {
         this.name = name;
         this.description = description;
-        this.platesId = Objects.requireNonNullElseGet(platesId, ArrayList::new);
+        this.IdPlates = Objects.requireNonNullElseGet(platesId, ArrayList::new);
 //        for (Plate plate : platesId) {
 //            this.price += plate.getPrice();
 //        }
     }
 
     public List<Integer> getPlatesId() {
-        return platesId;
+        return IdPlates;
     }
     public int getCreator() {
         return creator;
@@ -104,7 +103,7 @@ public class Menu {
         this.id = id;
     }
     public void setPlatesId(List<Integer> platesId) {
-        this.platesId = platesId;
+        this.IdPlates = platesId;
     }
 
 }

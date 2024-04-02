@@ -8,7 +8,7 @@ public interface MenuHandlerInterface {
     public List<Menu> getAllMenu();
     public Menu getMenuById(int id);
     public Menu addMenu(Menu menu);
-    public Menu updateMenu(Menu menu);
+    public Menu updateMenu(int id, Menu menu);
     public void deleteMenu(int id);
 
     //public List<Menu> getMenusByCreator(int creator);

@@ -8,10 +8,12 @@ import java.util.List;
 @Table(name = "Plate")
 public class Plate {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(name = "name")
     private String name;
+    @Column(name = "price")
     private double price;
+    @Column(name = "description")
     private String description;
 
 
@@ -65,6 +67,7 @@ public class Plate {
     @Override
     public String toString() {
         return "Plat{" +
+                "Id=" + id +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
