@@ -16,6 +16,10 @@ public class Plate {
 
 
     public Plate() {
+        this.id = 0;
+        this.name = "Plat inconnu";
+        this.price = 0;
+        this.description = "Description inconnue";
     }
     public Plate(String name, String description, double price) {
         this.name = name;
