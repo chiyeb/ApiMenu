@@ -11,14 +11,16 @@ public class Plate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    private String description;
     private double price;
+    private String description;
 
-    protected Plate() {
+
+    public Plate() {
     }
-    public Plate(String name, String description) {
+    public Plate(String name, String description, double price) {
         this.name = name;
         this.description = description;
+        this.price = price;
     }
 
     public int getId() {

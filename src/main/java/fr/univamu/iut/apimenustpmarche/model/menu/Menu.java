@@ -1,11 +1,11 @@
 package fr.univamu.iut.apimenustpmarche.model.menu;
 
 import fr.univamu.iut.apimenustpmarche.model.plate.Plate;
-import org.springframework.data.annotation.Id;
 
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Menu")
@@ -23,25 +23,30 @@ public class Menu {
     private double price;
     @Column(name = "Creator_Id")
     private int creator;
-    @ManyToMany
-    @JoinTable(
-            name = "Plates_In_Menus",
-            joinColumns = @JoinColumn(name = "Id_Menus"),
-            inverseJoinColumns = @JoinColumn(name = "Id_Plates")
-    )
-    private List<Plate> plates;
-
+//    @ManyToMany
+//    @JoinTable(
+//            name = "plates_in_menus",
+//            joinColumns = @JoinColumn(name = "id_menus", referencedColumnName = "id"),
+//            inverseJoinColumns = @JoinColumn(name = "id_plates", referencedColumnName = "id")
+//    )
+    @Transient
+    private List<Plate> plates = new ArrayList<>();
+    @Transient
+    private List<Integer> platesId;
     protected Menu() {
     }
-    public Menu(String name, String description, List<Plate> plates) {
+    public Menu(String name, String description, List<Integer> platesId) {
         this.name = name;
         this.description = description;
-        this.plates = plates;
-        for (Plate plate : plates) {
-            this.price += plate.getPrice();
-        }
+        this.platesId = Objects.requireNonNullElseGet(platesId, ArrayList::new);
+//        for (Plate plate : platesId) {
+//            this.price += plate.getPrice();
+//        }
     }
 
+    public List<Integer> getPlatesId() {
+        return platesId;
+    }
     public int getCreator() {
         return creator;
     }
@@ -53,6 +58,10 @@ public class Menu {
     }
     public void addPlate(Plate plate) {
         plates.add(plate);
+        setPrice(getPrice() + plate.getPrice());
+    }
+    public void setPrice(double price) {
+        this.price = price;
     }
     public void removePlat(Plate plate) {
         plates.remove(plate);
@@ -81,14 +90,21 @@ public class Menu {
     @Override
     public String toString() {
         return "Menu{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
+                ", creator=" + creator +
+                ", plates=" + plates +
                 '}';
     }
 
+
     public void setId(int id) {
         this.id = id;
+    }
+    public void setPlatesId(List<Integer> platesId) {
+        this.platesId = platesId;
     }
 
 }
