@@ -6,41 +6,80 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Contrôleur REST pour la gestion des menus. Fournit des endpoints pour créer, récupérer, mettre à jour,
+ * et supprimer des menus.
+ */
 @RestController
 @RequestMapping("/menu")
 public class MenuController {
     private final MenuHandler menuHandler;
 
+    /**
+     * Constructeur pour initialiser le contrôleur avec un gestionnaire de menus.
+     *
+     * @param menuHandler Le gestionnaire de menus utilisé pour les opérations sur les menus.
+     */
     @Autowired
     public MenuController(MenuHandler menuHandler) {
         this.menuHandler = menuHandler;
     }
 
+    /**
+     * Crée un nouveau menu et le stocke.
+     *
+     * @param menu Les détails du menu à créer.
+     * @return ResponseEntity contenant le menu créé.
+     */
     @PostMapping("/create")
     public ResponseEntity<Menu> createMenu(@RequestBody Menu menu) {
         Menu createdMenu = menuHandler.addMenu(menu);
         return ResponseEntity.ok(createdMenu);
     }
 
+    /**
+     * Récupère tous les menus existants.
+     *
+     * @return ResponseEntity contenant une liste de tous les menus.
+     */
     @GetMapping("/all")
     public ResponseEntity<?> getAllMenu() {
-        return ResponseEntity.ok(menuHandler.getAllMenu()); // Envoie la liste des menus avec un statut 200 OK
+        return ResponseEntity.ok(menuHandler.getAllMenu());
     }
 
+    /**
+     * Récupère un menu par son identifiant.
+     *
+     * @param id L'identifiant du menu à récupérer.
+     * @return ResponseEntity contenant le menu demandé.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<?> getMenuById(@PathVariable int id) {
-        return ResponseEntity.ok(menuHandler.getMenuById(id)); // Envoie le menu demandé avec un statut 200 OK
+        return ResponseEntity.ok(menuHandler.getMenuById(id));
     }
 
+    /**
+     * Met à jour un menu existant avec de nouveaux détails.
+     *
+     * @param id   L'identifiant du menu à mettre à jour.
+     * @param menu Les nouveaux détails du menu.
+     * @return ResponseEntity contenant le menu mis à jour.
+     */
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateMenu(@PathVariable int id, @RequestBody Menu menu) {
-        Menu updatedMenu = menuHandler.updateMenu(id, menu); // Assurez-vous que la méthode `updateMenu` dans `MenuHandler` accepte l'`id` et `menu` comme paramètres et retourne le menu mis à jour.
-        return ResponseEntity.ok(updatedMenu); // Envoie le menu mis à jour avec un statut 200 OK
+        Menu updatedMenu = menuHandler.updateMenu(id, menu);
+        return ResponseEntity.ok(updatedMenu);
     }
 
+    /**
+     * Supprime un menu par son identifiant.
+     *
+     * @param id L'identifiant du menu à supprimer.
+     * @return ResponseEntity indiquant que la suppression a réussi.
+     */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteMenu(@PathVariable int id) {
         menuHandler.deleteMenu(id);
-        return ResponseEntity.noContent().build(); // Renvoie un statut 204 No Content pour indiquer que la ressource a été supprimée avec succès
+        return ResponseEntity.noContent().build();
     }
 }

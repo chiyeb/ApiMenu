@@ -5,11 +5,11 @@ import fr.univamu.iut.apimenustpmarche.model.menu.Menu;
 import java.util.List;
 
 public interface MenuHandlerInterface {
-    public List<Menu> getAllMenu();
-    public Menu getMenuById(int id);
-    public Menu addMenu(Menu menu);
-    public Menu updateMenu(int id, Menu menu);
-    public void deleteMenu(int id);
+    List<Menu> getAllMenu();
+    Menu getMenuById(int id);
+    Menu addMenu(Menu menu);
+    Menu updateMenu(int id, Menu menu);
+    void deleteMenu(int id);
 
     //public List<Menu> getMenusByCreator(int creator);
 }

@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ApiMenuStpmarcheApplication {
+public class ApiMenuApp {
 
     public static void main(String[] args) {
-        SpringApplication.run(ApiMenuStpmarcheApplication.class, args);
+        SpringApplication.run(ApiMenuApp.class, args);
     }
 
 }
