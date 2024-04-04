@@ -127,7 +127,7 @@ public class Dish {
      */
     @Override
     public String toString() {
-        return "Plat{" +
+        return "Dish{" +
                 "Id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

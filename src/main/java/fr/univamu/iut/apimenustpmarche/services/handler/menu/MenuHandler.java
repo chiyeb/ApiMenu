@@ -1,5 +1,6 @@
 package fr.univamu.iut.apimenustpmarche.services.handler.menu;
 
+import com.google.gson.Gson;
 import fr.univamu.iut.apimenustpmarche.model.menu.Menu;
 import fr.univamu.iut.apimenustpmarche.model.dish.Dish;
 import fr.univamu.iut.apimenustpmarche.model.menu.MenuRequest;
@@ -22,6 +23,8 @@ import java.util.Objects;
 public class MenuHandler implements MenuHandlerInterface {
     private final MenuRepository menuRepository;
     private final WebClient webClient;
+    private static final Gson gson = new Gson();
+
 
     /**
      * Constructeur pour initialiser le gestionnaire de menus avec ses dépendances.
@@ -34,7 +37,6 @@ public class MenuHandler implements MenuHandlerInterface {
         this.menuRepository = menuRepository;
         this.webClient = webClient;
     }
-
     /**
      * Récupère tous les menus disponibles dans la base de données, avec leurs plats correspondants.
      *
@@ -43,27 +45,25 @@ public class MenuHandler implements MenuHandlerInterface {
     public List<Menu> getAllMenu() {
         ArrayList<Menu> menus = new ArrayList<>();
         for (Menu menu : menuRepository.findAll()) {
-            menu.setIdDishes(getDisheIdsByMenuId(menu.getId()));
-            menu.getIdDishes().forEach(System.out::println);
             for (Integer dishId : menu.getDishesInBD()) {
-                Mono<Dish> dishMono = webClient.get()
-                        .uri("/dishes/{id}", dishId)
+                Dish dish = webClient.get()
+                        .uri("/dish/{id}", dishId)
                         .retrieve()
-                        .bodyToMono(Dish.class)
-                        .onErrorReturn(new Dish());
-                Dish dish = dishMono.block();
+                        .bodyToMono(String.class)
+                        .map(response -> gson.fromJson(response, Dish.class))
+                        .onErrorResume(e -> Mono.just(new Dish()))
+                        .block();
+
                 assert dish != null;
-                System.out.println("Dish "+ dish.getName());
                 if (!Objects.equals(dish.getName(), "inconnu")) {
                     menu.addDish(dish);
-                    System.out.println("Dish "+ dish.getName());
                 }
             }
             menus.add(menu);
-            System.out.println("Taille "+ menu.getDishes().size());
         }
         return menus;
     }
+
 
     /**
      * Récupère un menu spécifique par son identifiant dans la base de données.
@@ -92,6 +92,7 @@ public class MenuHandler implements MenuHandlerInterface {
      * @return Le menu ajouté avec ses plats.
      */
     public Menu addMenu(MenuRequest menuRequest) {
+        UserLogin user = new UserLogin(menuRequest.getUser(), menuRequest.getPassword());
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getDescription(), menuRequest.getDishesId());
         for (int i = 0; i < menu.getIdDishes().size(); i++) {
             Mono<Dish> dishMono = webClient.get()

@@ -183,6 +183,7 @@ public class Menu {
      */
     public void addDish(Dish dish) {
         dishes.add(dish);
+        System.out.println("Menu : " + this.name+"Dish added : " + dish);
         setPrice(getPrice() + dish.getPrice());
     }
 

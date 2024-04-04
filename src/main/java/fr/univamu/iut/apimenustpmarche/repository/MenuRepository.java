@@ -19,6 +19,4 @@ public interface MenuRepository extends CrudRepository<Menu, Integer> {
 
     @Query(value = "SELECT p.id_dish FROM dishes_in_menus p WHERE p.id_menus = :menuId", nativeQuery = true)
     List<Integer> findDishIdsByMenuId(@Param("menuId") Integer menuId);
-
-    void deleteById(int id);
 }
