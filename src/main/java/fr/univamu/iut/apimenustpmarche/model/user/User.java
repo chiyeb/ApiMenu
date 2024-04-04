@@ -7,11 +7,9 @@ import jakarta.persistence.*;
  * Contient les informations de base d'un utilisateur telles que l'identifiant, le nom d'utilisateur,
  * le mot de passe, l'email, et l'adresse de livraison.
  */
-@Entity
-@Table(name = "User")
+
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
 
     private String username;

@@ -1,6 +1,9 @@
 package fr.univamu.iut.apimenustpmarche.control;
 
 import fr.univamu.iut.apimenustpmarche.model.menu.Menu;
+import fr.univamu.iut.apimenustpmarche.model.menu.MenuRequest;
+import fr.univamu.iut.apimenustpmarche.model.user.User;
+import fr.univamu.iut.apimenustpmarche.model.user.UserLogin;
 import fr.univamu.iut.apimenustpmarche.services.handler.menu.MenuHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +35,7 @@ public class MenuController {
      * @return ResponseEntity contenant le menu créé.
      */
     @PostMapping("/create")
-    public ResponseEntity<Menu> createMenu(@RequestBody Menu menu) {
+    public ResponseEntity<Menu> createMenu(@RequestBody MenuRequest menu) {
         Menu createdMenu = menuHandler.addMenu(menu);
         return ResponseEntity.ok(createdMenu);
     }
@@ -66,7 +69,7 @@ public class MenuController {
      * @return ResponseEntity contenant le menu mis à jour.
      */
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateMenu(@PathVariable int id, @RequestBody Menu menu) {
+    public ResponseEntity<?> updateMenu(@PathVariable int id, @RequestBody MenuRequest menu) {
         Menu updatedMenu = menuHandler.updateMenu(id, menu);
         return ResponseEntity.ok(updatedMenu);
     }
@@ -78,8 +81,8 @@ public class MenuController {
      * @return ResponseEntity indiquant que la suppression a réussi.
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteMenu(@PathVariable int id) {
-        menuHandler.deleteMenu(id);
+    public ResponseEntity<?> deleteMenu(@PathVariable int id, @RequestBody UserLogin user) {
+        menuHandler.deleteMenu(id, user);
         return ResponseEntity.noContent().build();
     }
 }

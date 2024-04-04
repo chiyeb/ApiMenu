@@ -1,7 +1,9 @@
 package fr.univamu.iut.apimenustpmarche.services.handler.menu;
 
 import fr.univamu.iut.apimenustpmarche.model.menu.Menu;
-import fr.univamu.iut.apimenustpmarche.model.plate.Plate;
+import fr.univamu.iut.apimenustpmarche.model.dish.Dish;
+import fr.univamu.iut.apimenustpmarche.model.menu.MenuRequest;
+import fr.univamu.iut.apimenustpmarche.model.user.UserLogin;
 import fr.univamu.iut.apimenustpmarche.repository.MenuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Gestionnaire de menus chargé de la manipulation et des opérations liées aux menus,
@@ -18,21 +21,18 @@ import java.util.List;
 @Component
 public class MenuHandler implements MenuHandlerInterface {
     private final MenuRepository menuRepository;
-    private final PlateHandlerInterface plateHandler;
     private final WebClient webClient;
 
     /**
      * Constructeur pour initialiser le gestionnaire de menus avec ses dépendances.
      *
      * @param menuRepository Le repository pour accéder aux données des menus.
-     * @param plateHandler   Le gestionnaire de plats pour les opérations sur les plats.
      * @param webClient      Le client web pour appeler des services externes liés aux plats.
      */
     @Autowired
-    public MenuHandler(MenuRepository menuRepository, PlateHandlerInterface plateHandler, WebClient webClient) {
+    public MenuHandler(MenuRepository menuRepository,WebClient webClient) {
         this.menuRepository = menuRepository;
         this.webClient = webClient;
-        this.plateHandler = plateHandler;
     }
 
     /**
@@ -43,20 +43,24 @@ public class MenuHandler implements MenuHandlerInterface {
     public List<Menu> getAllMenu() {
         ArrayList<Menu> menus = new ArrayList<>();
         for (Menu menu : menuRepository.findAll()) {
-            menu.setPlatesId(getPlateIdsByMenuId(menu.getId()));
-            menu.getPlatesId().forEach(System.out::println);
-            for (Integer plateId : menu.getPlatesId()) {
-                Mono<Plate> plateMono = webClient.get()
-                        .uri("/plate/{id}", plateId)
+            menu.setIdDishes(getDisheIdsByMenuId(menu.getId()));
+            menu.getIdDishes().forEach(System.out::println);
+            for (Integer dishId : menu.getDishesInBD()) {
+                Mono<Dish> dishMono = webClient.get()
+                        .uri("/dishes/{id}", dishId)
                         .retrieve()
-                        .bodyToMono(Plate.class)
-                        .onErrorReturn(new Plate());
-                Plate plate = plateMono.block();
-                if (plate != null) {
-                    menu.addPlate(plate);
+                        .bodyToMono(Dish.class)
+                        .onErrorReturn(new Dish());
+                Dish dish = dishMono.block();
+                assert dish != null;
+                System.out.println("Dish "+ dish.getName());
+                if (!Objects.equals(dish.getName(), "inconnu")) {
+                    menu.addDish(dish);
+                    System.out.println("Dish "+ dish.getName());
                 }
             }
             menus.add(menu);
+            System.out.println("Taille "+ menu.getDishes().size());
         }
         return menus;
     }
@@ -77,29 +81,27 @@ public class MenuHandler implements MenuHandlerInterface {
      * @param menuId L'identifiant du menu pour lequel les identifiants des plats sont recherchés.
      * @return Une liste d'identifiants de plats.
      */
-    public List<Integer> getPlateIdsByMenuId(int menuId) {
-        return menuRepository.findPlateIdsByMenuId(menuId);
+    public List<Integer> getDisheIdsByMenuId(int menuId) {
+        return menuRepository.findDishIdsByMenuId(menuId);
     }
 
     /**
      * Ajoute un nouveau menu, en incluant l'ajout des plats spécifiés au menu.
      *
-     * @param menu Le menu à ajouter.
+     * @param menuRequest Le menu à ajouter.
      * @return Le menu ajouté avec ses plats.
      */
-    public Menu addMenu(Menu menu) {
-        for (int i = 0; i < menu.getPlatesId().size(); i++) {
-            Mono<Plate> plateMono = webClient.get()
-                    .uri("/plate/{id}", menu.getPlatesId().get(i))
+    public Menu addMenu(MenuRequest menuRequest) {
+        Menu menu = new Menu(menuRequest.getName(), menuRequest.getDescription(), menuRequest.getDishesId());
+        for (int i = 0; i < menu.getIdDishes().size(); i++) {
+            Mono<Dish> dishMono = webClient.get()
+                    .uri("/dishes/{id}", menu.getIdDishes().get(i))
                     .retrieve()
-                    .bodyToMono(Plate.class);
-            Plate plate = plateMono.block();
-            if (plate != null) {
-                menu.addPlate(plate);
+                    .bodyToMono(Dish.class);
+            Dish dish = dishMono.block();
+            if (dish != null) {
+                menu.addDish(dish);
             }
-        }
-        for (Plate plate : menu.getPlates()) {
-            plateHandler.addPlate(plate);
         }
         return menuRepository.save(menu);
     }
@@ -108,10 +110,11 @@ public class MenuHandler implements MenuHandlerInterface {
      * Met à jour un menu existant avec son identifiant.
      *
      * @param id   L'identifiant du menu à mettre à jour.
-     * @param menu Le menu contenant les nouvelles informations.
+     * @param menuRequest Le menu contenant les nouvelles informations.
      * @return Le menu mis à jour.
      */
-    public Menu updateMenu(int id, Menu menu) {
+    public Menu updateMenu(int id, MenuRequest menuRequest) {
+        Menu menu = new Menu(menuRequest.getName(), menuRequest.getDescription(), menuRequest.getDishesId());
         Menu menuBd = menuRepository.findById(id).orElseThrow(RuntimeException::new);
         menu.setId(id);
         if (menu.getName() == null) {
@@ -120,10 +123,10 @@ public class MenuHandler implements MenuHandlerInterface {
         if (menu.getDescription() == null) {
             menu.setDescription(menuBd.getDescription());
         }
-        if (menu.getPlates() == null) {
-            menu.setPlates(menuBd.getPlates());
+        if (menu.getDishes() == null) {
+            menu.setDishes(menuBd.getDishes());
         }
-        return addMenu(menu);
+        return addMenu(menuRequest);
     }
 
     /**
@@ -131,12 +134,7 @@ public class MenuHandler implements MenuHandlerInterface {
      *
      * @param id L'identifiant du menu à supprimer.
      */
-    public void deleteMenu(int id) {
+    public void deleteMenu(int id, UserLogin user) {
         menuRepository.deleteById(id);
-        Menu menu = menuRepository.findById(id).orElse(null);
-        assert menu != null;
-        for (Plate plate : menu.getPlates()) {
-            plateHandler.deletePlate(plate);
-        }
     }
 }

@@ -1,36 +1,29 @@
-package fr.univamu.iut.apimenustpmarche.model.plate;
-
-import jakarta.persistence.*;
+package fr.univamu.iut.apimenustpmarche.model.dish;
 
 /**
  * Classe représentant un plat dans le système de gestion des menus.
  * Elle contient des informations de base sur chaque plat, telles que son identifiant, son nom,
  * sa description, et son prix.
  */
-@Entity
-@Table(name = "Plate")
-public class Plate {
-    @Id
+public class Dish {
+
     private int id;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "price")
     private double price;
 
-    @Column(name = "description")
     private String description;
 
     /**
      * Constructeur par défaut qui initialise un plat avec des valeurs par défaut.
      * L'identifiant est initialisé à 0, le nom à "Plat inconnu", le prix à 0, et la description à "Description inconnue".
      */
-    public Plate() {
+    public Dish() {
         this.id = 0;
-        this.name = "Plat inconnu";
+        this.name = "inconnu";
         this.price = 0;
-        this.description = "Description inconnue";
+        this.description = "inconnu";
     }
 
     /**
@@ -40,7 +33,7 @@ public class Plate {
      * @param description La description du plat.
      * @param price       Le prix du plat.
      */
-    public Plate(String name, String description, double price) {
+    public Dish(String name, String description, double price) {
         this.name = name;
         this.description = description;
         this.price = price;
