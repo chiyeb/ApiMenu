@@ -2,8 +2,7 @@ package fr.univamu.iut.apimenustpmarche.control;
 
 import fr.univamu.iut.apimenustpmarche.model.menu.Menu;
 import fr.univamu.iut.apimenustpmarche.model.menu.MenuRequest;
-import fr.univamu.iut.apimenustpmarche.model.user.User;
-import fr.univamu.iut.apimenustpmarche.model.user.UserLogin;
+import fr.univamu.iut.apimenustpmarche.model.user.LoginCredentials;
 import fr.univamu.iut.apimenustpmarche.services.handler.menu.MenuHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -81,7 +80,7 @@ public class MenuController {
      * @return ResponseEntity indiquant que la suppression a réussi.
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteMenu(@PathVariable int id, @RequestBody UserLogin user) {
+    public ResponseEntity<?> deleteMenu(@PathVariable int id, @RequestBody LoginCredentials user) {
         menuHandler.deleteMenu(id, user);
         return ResponseEntity.noContent().build();
     }

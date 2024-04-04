@@ -4,11 +4,11 @@ package fr.univamu.iut.apimenustpmarche.model.user;
  * La classe UserLogin représente les informations de connexion d'un utilisateur pour se connecter.
  * Elle contient le nom d'utilisateur et le mot de passe.
  */
-public class UserLogin {
+public class LoginCredentials {
     /**
      * Le nom d'utilisateur.
      */
-    private String user;
+    private String username;
 
     /**
      * Le mot de passe de l'utilisateur.
@@ -18,11 +18,11 @@ public class UserLogin {
     /**
      * Construit une nouvelle instance de UserLogin avec le nom d'utilisateur et le mot de passe spécifiés.
      *
-     * @param user Le nom d'utilisateur.
+     * @param username Le nom d'utilisateur.
      * @param password Le mot de passe de l'utilisateur.
      */
-    public UserLogin(String user, String password) {
-        this.user = user;
+    public LoginCredentials(String username, String password) {
+        this.username = username;
         this.password = password;
     }
 
@@ -31,17 +31,17 @@ public class UserLogin {
      *
      * @return Le nom d'utilisateur.
      */
-    public String getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
     /**
      * Définit le nom d'utilisateur.
      *
-     * @param user Le nouveau nom d'utilisateur.
+     * @param username Le nouveau nom d'utilisateur.
      */
-    public void setUser(String user) {
-        this.user = user;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**

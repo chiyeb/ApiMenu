@@ -3,7 +3,7 @@ package fr.univamu.iut.apimenustpmarche.test.menu;
 import fr.univamu.iut.apimenustpmarche.model.dish.Dish;
 import fr.univamu.iut.apimenustpmarche.model.menu.Menu;
 import fr.univamu.iut.apimenustpmarche.model.menu.MenuRequest;
-import fr.univamu.iut.apimenustpmarche.model.user.UserLogin;
+import fr.univamu.iut.apimenustpmarche.model.user.LoginCredentials;
 import fr.univamu.iut.apimenustpmarche.repository.MenuRepository;
 import fr.univamu.iut.apimenustpmarche.services.handler.menu.MenuHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +14,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -88,7 +87,7 @@ class MenuHandlerTest {
     void shouldDeleteMenu() {
         int menuId = 1;
         doNothing().when(menuRepository).deleteById(menuId);
-        menuHandler.deleteMenu(menuId, new UserLogin("admin", "admin"));
+        menuHandler.deleteMenu(menuId, new LoginCredentials("admin", "admin"));
         verify(menuRepository, times(1)).deleteById(menuId);
     }
 }
