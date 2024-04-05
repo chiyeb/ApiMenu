@@ -81,6 +81,7 @@ public class MenuController {
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteMenu(@PathVariable int id, @RequestBody LoginCredentials user) {
+        System.out.println("User : " + user);
         menuHandler.deleteMenu(id, user);
         return ResponseEntity.noContent().build();
     }

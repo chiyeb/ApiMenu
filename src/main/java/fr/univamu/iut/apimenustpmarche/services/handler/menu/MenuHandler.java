@@ -186,9 +186,12 @@ public class MenuHandler implements MenuHandlerInterface {
      * @param id L'identifiant du menu à supprimer.
      */
     public void deleteMenu(int id, LoginCredentials userCredentials) {
+        System.out.println("UserCredentials : " + userCredentials);
         User user = getUserByLoginCredentials(userCredentials);
+        System.out.println("User : " + user);
         menuRepository.findById(id).ifPresentOrElse(menu -> {
             if (user == null) {
+                System.out.println("User not found or authentication failed");
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found or authentication failed");
             }
             if (menu.getCreator() != user.getId()) {
