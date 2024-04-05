@@ -83,7 +83,17 @@ public class MenuHandler implements MenuHandlerInterface {
      * @return Le menu correspondant à l'identifiant, ou null si aucun menu n'a été trouvé.
      */
     public Menu getMenuById(int id) {
-        return menuRepository.findById(id).orElse(null);
+        Menu menu =  menuRepository.findById(id).orElse(null);
+        if (menu != null) {
+            for (Integer dishId : menu.getDishesInBD()) {
+                Dish dish = getDishById(dishId);
+                assert dish != null;
+                if (!Objects.equals(dish.getName(), "inconnu")) {
+                    menu.addDish(dish);
+                }
+            }
+        }
+        return menu;
     }
 
     /**
